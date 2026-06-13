@@ -1,4 +1,4 @@
-import { useAuthStore } from "../store/authStore.js"; // 👈 importar el store
+import { useAuthStore } from "../store/authStore.js";
 import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 

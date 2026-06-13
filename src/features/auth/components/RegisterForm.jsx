@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { registerClient } from '../../../shared/Api/client.js';
+import { register as registerClient } from '../../../shared/Api/auth.js';
 import toast from 'react-hot-toast';
 
 const RegisterForm = ({ onSwitch }) => {
@@ -7,17 +7,31 @@ const RegisterForm = ({ onSwitch }) => {
 
   const onSubmit = async (data) => {
     try {
-      await registerClient(data);
+      console.log("📤 Datos enviados:", data);
+
+      const payload = {
+        Name: data.UserName,
+        Surname: data.UserSurname,
+        Username: data.UserEmail.split('@')[0],
+        Email: data.UserEmail,
+        Password: data.UserPassword,
+        Dpi: data.UserDPI,
+        Phone: data.UserPhone,
+        Address: data.UserAddress,
+        JobTitle: data.UserJob,
+        MonthlyIncome: data.UserIncome,
+      };
+
+      await registerClient(payload);
       toast.success('Cuenta creada. Revisa tu correo para verificarla.');
       onSwitch();
     } catch (error) {
+      console.log("❌ Error completo:", error.response?.data);
       toast.error(error.response?.data?.message || 'Error al registrarse');
     }
   };
-
   const inputClass = (field) =>
-    `w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-      errors[field] ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-emerald-500'
+    `w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors[field] ? 'border-red-500 focus:ring-red-200' : 'border-gray-300 focus:ring-emerald-500'
     }`;
 
   const ErrorMsg = ({ field }) =>
@@ -95,7 +109,10 @@ const RegisterForm = ({ onSwitch }) => {
             className={inputClass('UserDPI')}
             {...register('UserDPI', {
               required: 'Requerido',
-              maxLength: { value: 15, message: 'Máximo 15 caracteres' }
+              pattern: {
+                value: /^\d{13}$/,
+                message: 'El DPI debe tener exactamente 13 dígitos'
+              }
             })}
           />
           <ErrorMsg field="UserDPI" />

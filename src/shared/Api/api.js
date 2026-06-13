@@ -40,7 +40,7 @@ const axiosAuth = axios.create({
     headers: { "Content-Type": "application/json" },
 });
 
-const axiosClient = axios.create({        
+const axiosClient = axios.create({
     baseURL: import.meta.env.VITE_CLIENT_URL,
     timeout: 8000,
     headers: { "Content-Type": "application/json" },
@@ -53,8 +53,8 @@ axiosAuth.interceptors.request.use((config) => {
     return attachAuthToken(config, token);
 });
 
-axiosClient.interceptors.request.use((config) => {  
-    config._axiosClient = "client";                 
+axiosClient.interceptors.request.use((config) => {
+    config._axiosClient = "client";
     const token = useAuthStore.getState().token || getStoredToken();
     return attachAuthToken(config, token);
 });
@@ -76,18 +76,19 @@ const handleRefreshToken = async function (_error) {
         return Promise.reject(_error);
     }
 
-    const status        = _error.response?.status;
-    const errorCode     = _error.response?.data?.error;
-    const requestUrl    = _original.url || "";
+    const status = _error.response?.status;
+    const errorCode = _error.response?.data?.error;
+    const requestUrl = _original.url || "";
 
     const isRefreshEndpoint = requestUrl.includes("/auths/refresh");
-
+    const isLoginEndpoint = requestUrl.includes("/Auth/login");
+    
     const shouldRefresh =
         (!isRefreshEndpoint && status === 401) ||
         (!isRefreshEndpoint && status === 403 && errorCode === "TOKEN_EXPIRED");
 
     if (shouldRefresh) {
-        const retryClient = _original._axiosClient === "client" ? axiosClient : axiosAuth; 
+        const retryClient = _original._axiosClient === "client" ? axiosClient : axiosAuth;
 
         if (_isRefreshing) {
             return new Promise((resolve, reject) => {
@@ -100,8 +101,8 @@ const handleRefreshToken = async function (_error) {
                 .catch((err) => Promise.reject(err));
         }
 
-        _original._retry  = true;
-        _isRefreshing     = true;
+        _original._retry = true;
+        _isRefreshing = true;
 
         const refreshToken = useAuthStore.getState().refreshToken;
         if (!refreshToken) {
@@ -119,10 +120,10 @@ const handleRefreshToken = async function (_error) {
             } = response.data;
 
             useAuthStore.setState({
-                token:           accessToken,
-                refreshToken:    newRefreshToken,
-                expiresAt:       expiresIn,
-                user:            user || useAuthStore.getState().user,
+                token: accessToken,
+                refreshToken: newRefreshToken,
+                expiresAt: expiresIn,
+                user: user || useAuthStore.getState().user,
                 isAuthenticated: true,
             });
 
@@ -142,7 +143,7 @@ const handleRefreshToken = async function (_error) {
 };
 
 axiosAuth.interceptors.response.use((res) => res, handleRefreshToken);
-axiosClient.interceptors.response.use((res) => res, handleRefreshToken); 
+axiosClient.interceptors.response.use((res) => res, handleRefreshToken);
 
 // ================= EXPORTS =================
 export { axiosAuth, axiosClient, handleRefreshToken }; 

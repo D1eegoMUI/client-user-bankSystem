@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { login as loginRequest } from "../../../shared/Api";
+import { login as loginRequest } from "../../../shared/Api/auth.js";
 import toast from 'react-hot-toast';
 
 export const useAuthStore = create(
@@ -21,10 +21,10 @@ export const useAuthStore = create(
                     const user = responseData.user || responseData.data;
                     const token = responseData.token || responseData.accessToken;
                     const role = user?.role || user?.userRol || user?.UserRol || responseData.role;
-                    console.log("Response completa:", responseData); 
-                    console.log("Rol detectado:", role);              
+                    console.log("Response completa:", responseData);
+                    console.log("Rol detectado:", role);
 
-                    const isClient = role === "CLIENT" || role === "USER" || role === "User";
+                    const isClient = role === "CLIENT" || role === "USER" || role === "User" || role === "USER_ROLE";
                     if (!isClient) {
                         const message = "Acceso solo para clientes";
                         set({ isAuthenticated: false, loading: false, error: message });
