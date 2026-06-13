@@ -1,28 +1,24 @@
+import { useAuthStore } from "../store/authStore.js"; // 👈 importar el store
 import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 
-const LoginForm = ({ onForgot, onRegister }) => { 
+const LoginForm = ({ onForgot, onRegister }) => {
     const navigate = useNavigate();
 
-    const loading = false;
-    const login = async (data) => { 
-        console.log("Datos capturados:", data);
-        return { success: true };
-    };
+    const login = useAuthStore((state) => state.login);
+    const loading = useAuthStore((state) => state.loading);
 
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm({
-        mode: "onTouched" 
+        mode: "onTouched"
     });
 
     const onSubmit = async (data) => {
         const res = await login(data);
         if (res.success) {
-            toast.success("¡Bienvenido!");
             navigate("/dashboard");
         }
     };
@@ -37,9 +33,8 @@ const LoginForm = ({ onForgot, onRegister }) => {
                 <input
                     type="email"
                     placeholder="ejemplo@gmail.com"
-                    className={`w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        errors.Email ? "border-red-500 focus:ring-red-200" : "border-gray-300 focus:ring-emerald-500"
-                    }`}
+                    className={`w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors.Email ? "border-red-500 focus:ring-red-200" : "border-gray-300 focus:ring-emerald-500"
+                        }`}
                     {...register("Email", {
                         required: "Este campo es obligatorio",
                         pattern: {
@@ -63,9 +58,8 @@ const LoginForm = ({ onForgot, onRegister }) => {
                 <input
                     type="password"
                     placeholder="••••••••"
-                    className={`w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
-                        errors.Password ? "border-red-500 focus:ring-red-200" : "border-gray-300 focus:ring-emerald-500"
-                    }`}
+                    className={`w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors.Password ? "border-red-500 focus:ring-red-200" : "border-gray-300 focus:ring-emerald-500"
+                        }`}
                     {...register("Password", {
                         required: "La contraseña es obligatoria",
                         minLength: {
@@ -89,7 +83,6 @@ const LoginForm = ({ onForgot, onRegister }) => {
                 {loading ? "Iniciando..." : "Iniciar Sesión"}
             </button>
 
-            {/* 👇 Ambos links juntos y separados visualmente */}
             <div className="flex flex-col items-center gap-2">
                 <button
                     type="button"
@@ -105,7 +98,7 @@ const LoginForm = ({ onForgot, onRegister }) => {
                     ¿No tienes cuenta?{" "}
                     <button
                         type="button"
-                        onClick={onRegister}  // 👈 activa la vista de registro
+                        onClick={onRegister}
                         className="text-emerald-700 hover:underline font-medium"
                     >
                         Regístrate

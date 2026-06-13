@@ -1,12 +1,5 @@
 import { axiosClient } from './api';
 
-// ===== AUTH =====
-export const registerClient = async (data) =>
-  await axiosClient.post('/auth/register', data);
-
-export const loginClient = async (data) =>
-  await axiosClient.post('/auth/login', data);
-
 // ===== ACCOUNTS =====
 export const getMyAccounts = async () =>
   await axiosClient.get('/accounts');

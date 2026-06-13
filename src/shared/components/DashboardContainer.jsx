@@ -14,19 +14,10 @@ export const DashboardContainer = () => {
             <Navbar onMenuClick={toggleSidebar} />
 
             <div className="flex flex-1 relative">
-                {/* 
-                  Agregamos flex-shrink-0 para que el Sidebar mantenga su ancho fijo 
-                  y no se deje "aplastar" por el contenido del main.
-                */}
                 <div className="flex-shrink-0">
                     <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
                 </div>
 
-                {/* 
-                  Cambiamos w-full por min-w-0. 
-                  min-w-0 permite que el contenedor flexible se reduzca correctamente 
-                  en lugar de forzar el ancho basado en su contenido interno.
-                */}
                 <main className="flex-1 min-w-0 p-4 md:p-8 bg-gradient-to-br from-gray-50 to-emerald-50/30">
                     <div className="max-w-7xl mx-auto">
                         <Outlet />
