@@ -18,20 +18,46 @@ const AuthPage = () => {
       style={{ background: 'linear-gradient(135deg, #064e3b 0%, #047857 100%)' }}
     >
       <div className="w-full max-w-sm bg-white rounded-2xl border border-white/60 p-8 shadow-2xl">
+
+        {/* LOGO */}
         <div className="flex justify-center mb-6">
-          <img src="/src/assets/img/Kinal_bank.png" alt="KinalBank" className="h-32 w-auto object-contain" />
+          <img
+            src="/src/assets/img/Kinal_bank.png"
+            alt="KinalBank"
+            className="h-32 w-auto object-contain"
+          />
         </div>
 
+        {/* TÍTULO DINÁMICO */}
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-emerald-900 mb-2">{titles[view].title}</h1>
-          <p className="text-gray-500 text-sm">{titles[view].sub}</p>
+          <h1 className="text-2xl font-bold text-emerald-900 mb-2">
+            {titles[view].title}
+          </h1>
+          <p className="text-gray-500 text-sm">
+            {titles[view].sub}
+          </p>
         </div>
 
+        {/* FORMULARIO DINÁMICO */}
         <div className="mt-8">
-          {view === 'login'    && <LoginForm onForgot={() => setView('forgot')} onRegister={() => setView('register')} />}
-          {view === 'register' && <RegisterForm onSwitch={() => setView('login')} />}
-          {view === 'forgot'   && <ForgotPasswordForm onSwitch={() => setView('login')} />}
+          {view === 'login' && (
+            <LoginForm
+              onForgot={() => setView('forgot')}
+              onRegister={() => setView('register')}
+            />
+          )}
+          {view === 'register' && (
+            <RegisterForm
+              onSwitch={() => setView('login')}
+            />
+          )}
+          {view === 'forgot' && (
+            <ForgotPasswordForm
+              onSwitch={() => setView('login')}
+            />
+          )}
         </div>
+
       </div>
     </div>
   );

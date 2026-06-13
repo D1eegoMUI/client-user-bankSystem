@@ -2,18 +2,13 @@ import { useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-const LoginForm = ({ onForgot }) => {
+const LoginForm = ({ onForgot, onRegister }) => { 
     const navigate = useNavigate();
 
-    // 1. Mantenemos esto comentado porque el archivo no existe
-    // const login = useAuthStore((state) => state.login);
-    // const loading = useAuthStore((state) => state.loading); 
-
-    // 2. Creamos variables "ficticias" para que el formulario no rompa
-    const loading = false; // Simulamos que no está cargando
+    const loading = false;
     const login = async (data) => { 
         console.log("Datos capturados:", data);
-        return { success: true }; // Simulamos un login exitoso siempre
+        return { success: true };
     };
 
     const {
@@ -34,7 +29,7 @@ const LoginForm = ({ onForgot }) => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Sección de email */}    
+            {/* Email */}
             <div>
                 <label className="block text-sm font-medium text-gray-800 mb-1.5">
                     Correo
@@ -60,7 +55,7 @@ const LoginForm = ({ onForgot }) => {
                 )}
             </div>
 
-            {/* Sección de contraseña */}
+            {/* Contraseña */}
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     Contraseña
@@ -84,7 +79,7 @@ const LoginForm = ({ onForgot }) => {
                         <span className="font-bold">⚠</span> {errors.Password.message}
                     </p>
                 )}
-            </div>  
+            </div>
 
             <button
                 type="submit"
@@ -94,14 +89,28 @@ const LoginForm = ({ onForgot }) => {
                 {loading ? "Iniciando..." : "Iniciar Sesión"}
             </button>
 
-            <div className="text-center">
+            {/* 👇 Ambos links juntos y separados visualmente */}
+            <div className="flex flex-col items-center gap-2">
                 <button
                     type="button"
                     onClick={onForgot}
                     className="text-sm text-emerald-700 hover:underline font-medium"
                 >
-                    ¿Olvidaste tu Contraseña?
+                    ¿Olvidaste tu contraseña?
                 </button>
+
+                <div className="w-full border-t border-gray-100 my-1" />
+
+                <p className="text-sm text-gray-500">
+                    ¿No tienes cuenta?{" "}
+                    <button
+                        type="button"
+                        onClick={onRegister}  // 👈 activa la vista de registro
+                        className="text-emerald-700 hover:underline font-medium"
+                    >
+                        Regístrate
+                    </button>
+                </p>
             </div>
         </form>
     );
