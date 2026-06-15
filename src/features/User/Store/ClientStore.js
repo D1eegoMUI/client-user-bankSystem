@@ -10,7 +10,7 @@ export const useMyAccountStore = create((set) => ({
     getMyAccounts: async () => {
         set({ loading: true });
         try {
-            const { data } = await getMyAccounts();
+            const { data } = await client.getMyAccounts();
             set({ accounts: data.data || [] });
         } finally {
             set({ loading: false });
@@ -18,7 +18,7 @@ export const useMyAccountStore = create((set) => ({
     },
 
     openMyAccount: async ({ accountType }) => {
-        const { data } = await openMyAccount({ accountType });
+        const { data } = await client.openMyAccount({ accountType });
         set((state) => ({ accounts: [data.data, ...state.accounts] }));
         return data;
     },
@@ -26,7 +26,7 @@ export const useMyAccountStore = create((set) => ({
     getMyAccountHistory: async (accountId) => {
         set({ loadingHistory: true, history: [] });
         try {
-            const { data } = await getMyAccountHistory(accountId);
+            const { data } = await client.getMyAccountHistory(accountId);
             set({ history: data.data || [] });
         } finally {
             set({ loadingHistory: false });

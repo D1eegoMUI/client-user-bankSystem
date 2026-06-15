@@ -20,7 +20,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     const handleLogout = () => { logout(); navigate('/'); };
 
     const items = [
-        { label: 'Mis Cuentas', icon: AccountIcon, path: 'accounts' },
+        { label: 'Mis Cuentas', icon: AccountIcon, path: 'account' },
         { label: 'Tarjetas Débito', icon: CardIcon, path: 'cards' },
         { label: 'Tarjetas Crédito', icon: CardIcon, path: 'credit-cards' },
         { label: 'Transferencias', icon: TransactionIcon, path: 'transactions' },

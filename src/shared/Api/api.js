@@ -56,6 +56,7 @@ axiosAuth.interceptors.request.use((config) => {
 axiosClient.interceptors.request.use((config) => {
     config._axiosClient = "client";
     const token = useAuthStore.getState().token || getStoredToken();
+    console.log('TOKEN:', token);
     return attachAuthToken(config, token);
 });
 

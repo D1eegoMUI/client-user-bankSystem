@@ -4,7 +4,7 @@ import { useAuthStore } from '../../features/auth/store/authStore.js';
 export const ProtectedRoute = ({ children }) => {
   const { user } = useAuthStore();
   
-  const isAllowed = user && user.role === 'ADMIN_ROLE'; 
+  const isAllowed = user && user.role === 'USER_ROLE'; 
 
   if (!isAllowed) {
     return <Navigate to="/" replace />;
