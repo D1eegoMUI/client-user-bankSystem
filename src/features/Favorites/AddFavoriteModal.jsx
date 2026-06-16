@@ -4,17 +4,17 @@ import { showSuccess, showError } from '../../shared/utils/toast.jsx';
 
 export const AddFavoriteModal = ({ onClose }) => {
     const { addFavorite, loading } = useFavoritesStore();
-    const [form, setForm] = useState({ accountId: '', alias: '' });
+    const [form, setForm] = useState({ accountNumber: '', alias: '' });
 
     const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
     const handleSubmit = async () => {
-        if (!form.accountId.trim() || !form.alias.trim()) {
+        if (!form.accountNumber.trim() || !form.alias.trim()) {
             showError('Por favor completa todos los campos');
             return;
         }
         try {
-            await addFavorite({ accountId: form.accountId.trim(), alias: form.alias.trim() });
+            await addFavorite({ accountNumber: form.accountNumber.trim(), alias: form.alias.trim() });
             showSuccess('Cuenta agregada a favoritos');
             onClose();
         } catch (err) {
@@ -32,16 +32,16 @@ export const AddFavoriteModal = ({ onClose }) => {
 
                 <div className="p-6 space-y-4">
                     <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-1">ID de la cuenta</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-1">Número de cuenta</label>
                         <input
                             type="text"
-                            name="accountId"
-                            value={form.accountId}
+                            name="accountNumber"
+                            value={form.accountNumber}
                             onChange={handleChange}
-                            placeholder="ID de la cuenta bancaria"
+                            placeholder="Ej: 6816312282"
                             className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300"
                         />
-                        <p className="text-xs text-gray-400 mt-1">El ID único de la cuenta que quieres guardar</p>
+                        <p className="text-xs text-gray-400 mt-1">El número de cuenta de 10 dígitos</p>
                     </div>
 
                     <div>
