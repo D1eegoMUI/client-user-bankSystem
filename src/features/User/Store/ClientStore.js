@@ -1,6 +1,7 @@
 import * as client from '../../../shared/Api/client.js';
 import { create } from 'zustand';
 
+// ===== ACCOUNTS STORE (de Diego - no tocar) =====
 export const useMyAccountStore = create((set) => ({
     accounts: [],
     history: [],
@@ -31,5 +32,75 @@ export const useMyAccountStore = create((set) => ({
         } finally {
             set({ loadingHistory: false });
         }
+    },
+}));
+
+// ===== LOAN APPLICATIONS STORE =====
+export const useLoanApplicationStore = create((set) => ({
+    applications: [],
+    loading: false,
+
+    getMyLoanApplications: async () => {
+        set({ loading: true });
+        try {
+            const { data } = await client.getMyLoanApplications();
+            set({ applications: data.data || [] });
+        } finally {
+            set({ loading: false });
+        }
+    },
+
+    createLoanApplication: async (payload) => {
+        const { data } = await client.createLoanApplication(payload);
+        set((state) => ({ applications: [data.data, ...state.applications] }));
+        return data;
+    },
+
+    updateLoanApplication: async (id, payload) => {
+        const { data } = await client.updateLoanApplication(id, payload);
+        set((state) => ({
+            applications: state.applications.map((a) =>
+                a._id === id ? data.data : a
+            ),
+        }));
+        return data;
+    },
+
+    cancelLoanApplication: async (id) => {
+        await client.cancelLoanApplication(id);
+        set((state) => ({
+            applications: state.applications.map((a) =>
+                a._id === id ? { ...a, status: 'CANCELLED' } : a
+            ),
+        }));
+    },
+}));
+
+// ===== FAVORITES STORE =====
+export const useFavoritesStore = create((set) => ({
+    favorites: [],
+    loading: false,
+
+    getMyFavorites: async () => {
+        set({ loading: true });
+        try {
+            const { data } = await client.getMyFavorites();
+            set({ favorites: data.favorites || [] });
+        } finally {
+            set({ loading: false });
+        }
+    },
+
+    addFavorite: async (payload) => {
+        const { data } = await client.addFavorite(payload);
+        await useFavoritesStore.getState().getMyFavorites();
+        return data;
+    },
+
+    removeFavorite: async (id) => {
+        await client.removeFavorite(id);
+        set((state) => ({
+            favorites: state.favorites.filter((f) => f._id !== id),
+        }));
     },
 }));
