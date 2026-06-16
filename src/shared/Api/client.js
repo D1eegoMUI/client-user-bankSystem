@@ -55,16 +55,16 @@ export const payLoanInstallment = async (data) =>
 
 // ===== LOAN APPLICATIONS =====
 export const getMyLoanApplications = async () =>
-  await axiosClient.get('/loan-applications');
+  await axiosClient.get('/loanApplications');
 
 export const createLoanApplication = async (data) =>
-  await axiosClient.post('/loan-applications', data);
+  await axiosClient.post('/loanApplications', data);
 
 export const updateLoanApplication = async (id, data) =>
-  await axiosClient.put(`/loan-applications/${id}`, data);
+  await axiosClient.put(`/loanApplications/${id}`, data);
 
 export const cancelLoanApplication = async (id) =>
-  await axiosClient.patch(`/loan-applications/${id}/cancel`);
+  await axiosClient.patch(`/loanApplications/${id}/cancel`);
 
 // ===== PURCHASES =====
 export const getMyPurchases = async (params) =>
