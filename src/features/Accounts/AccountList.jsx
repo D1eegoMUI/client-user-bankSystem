@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useMyAccountStore } from '../User/Store/ClientStore.js';
 import { Search, History, PlusCircle } from 'lucide-react';
+import { BaseButton } from '../../shared/components/BaseButton.jsx';
 
 export const AccountList = ({ onOpenAccount, onViewHistory }) => {
     const { accounts, getMyAccounts, loading } = useMyAccountStore();
@@ -38,13 +39,9 @@ export const AccountList = ({ onOpenAccount, onViewHistory }) => {
                     </h1>
                     <p className="text-gray-500">Gestiona y consulta tus productos bancarios</p>
                 </div>
-                <button
-                    onClick={onOpenAccount}
-                    className="bg-emerald-600 hover:bg-emerald-700 px-6 py-3 rounded-xl text-white font-bold transition-all shadow-lg shadow-emerald-200 flex items-center gap-2"
-                >
-                    <PlusCircle size={18} />
+                <BaseButton variant="primary" size="lg" icon={<PlusCircle size={18} />} onClick={onOpenAccount}>
                     Abrir Nueva Cuenta
-                </button>
+                </BaseButton>
             </div>
 
             {/* Filtros */}
@@ -64,11 +61,10 @@ export const AccountList = ({ onOpenAccount, onViewHistory }) => {
                         <button
                             key={opt}
                             onClick={() => setFilterType(opt)}
-                            className={`px-4 py-2.5 rounded-xl text-xs font-bold border transition-all ${
-                                filterType === opt
-                                    ? 'bg-emerald-600 text-white border-emerald-600'
-                                    : 'bg-white text-gray-600 border-gray-200 hover:border-emerald-300'
-                            }`}
+                            className={`px-4 py-2.5 rounded-xl text-xs font-bold border transition-all ${filterType === opt
+                                ? 'bg-emerald-600 text-white border-emerald-600'
+                                : 'bg-white text-gray-600 border-gray-200 hover:border-emerald-300'
+                                }`}
                         >
                             {opt}
                         </button>
@@ -122,14 +118,14 @@ export const AccountList = ({ onOpenAccount, onViewHistory }) => {
                                     </span>
                                 </div>
 
-                                <button
-                                    type="button"
+                                <BaseButton
+                                    variant="secondary"
+                                    fullWidth
+                                    icon={<History size={15} />}
                                     onClick={() => onViewHistory(account._id)}
-                                    className="w-full py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-sm font-bold rounded-xl transition-colors border border-emerald-100 flex items-center justify-center gap-2"
                                 >
-                                    <History size={15} />
                                     Ver Movimientos
-                                </button>
+                                </BaseButton>
                             </div>
                         </div>
                     ))}
