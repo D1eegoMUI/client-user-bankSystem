@@ -98,3 +98,34 @@ export const useMyPurchaseStore = create((set) => ({
         }
     },
 }));
+
+export const useExchangeStore = create((set) => ({
+    lastConversion: null,
+    loading: false,
+    error: null,
+
+    convert: async (amount, from, to) => {
+        set({
+            loading: true,
+            error: null,
+        });
+        try {
+            const { data } = await client.convertAmount({
+                amount,
+                from,
+                to,
+            });
+            set({lastConversion: data.conversion, });
+            return data;
+        } catch (error) {
+            set({
+                error:
+                    error.response?.data?.message ||
+                    'Error al convertir moneda',
+            });
+            throw error;
+        } finally {
+            set({loading: false});
+        }
+    },
+}));
