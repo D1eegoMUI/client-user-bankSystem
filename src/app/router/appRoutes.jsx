@@ -1,8 +1,9 @@
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { AuthPage } from '../../features/auth/pages/AuthPage.jsx';
 import { DashboardPage } from '../layouts/DashboardPage.jsx';
 import { ProtectedRoute } from '../../shared/utils/ProtectedRoute.jsx';
 import { AccountsView } from '../../features/Accounts/AccountsView.jsx';
+import { PurchasesView } from '../../features/Purchases/PurchasesView.jsx';
 
 export const AppRoutes = () => (
   <Routes>
@@ -21,6 +22,7 @@ export const AppRoutes = () => (
 
       {/* Estas sub-rutas heredan la protección del padre */}
       <Route path="account" element={<AccountsView />} />
+      <Route path="purchases" element={<PurchasesView />} />
     </Route>
     
     {/* Manejo de errores 404 */}

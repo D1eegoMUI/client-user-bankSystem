@@ -32,16 +32,16 @@ export const toggleMyCardStatus = async (id) =>
 
 // ===== CREDIT CARDS =====
 export const getMyCreditCards = async () =>
-  await axiosClient.get('/credit-cards');
+  await axiosClient.get('/creditCards');
 
 export const requestCreditCard = async (data) =>
-  await axiosClient.post('/credit-cards', data);
+  await axiosClient.post('/creditCards', data);
 
 export const payCreditCard = async (data) =>
-  await axiosClient.post('/credit-cards/pay', data);
+  await axiosClient.post('/creditCards/pay', data);
 
 export const getMyCreditCardPayments = async (params) =>
-  await axiosClient.get('/credit-cards/payments', { params });
+  await axiosClient.get('/creditCards/payments', { params });
 
 // ===== LOANS =====
 export const getMyLoans = async () =>
@@ -66,7 +66,14 @@ export const updateLoanApplication = async (id, data) =>
 export const cancelLoanApplication = async (id) =>
   await axiosClient.patch(`/loan-applications/${id}/cancel`);
 
+// ===== PRODUCTS =====
+export const getActiveProducts = async (params) =>
+  await axiosClient.get('/products', { params });
+
 // ===== PURCHASES =====
+export const getPurchaseCatalog = async (params) =>
+  await getActiveProducts(params);
+
 export const getMyPurchases = async (params) =>
   await axiosClient.get('/purchases', { params });
 

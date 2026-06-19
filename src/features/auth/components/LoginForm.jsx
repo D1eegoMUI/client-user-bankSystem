@@ -1,5 +1,5 @@
 import { useAuthStore } from "../store/authStore.js";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 const LoginForm = ({ onForgot, onRegister }) => {
