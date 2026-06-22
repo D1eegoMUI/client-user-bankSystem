@@ -5,13 +5,15 @@ import { ProtectedRoute } from '../../shared/utils/ProtectedRoute.jsx';
 import { AccountsView } from '../../features/Accounts/AccountsView.jsx';
 import { PurchasesView } from '../../features/Purchases/PurchasesView.jsx';
 import { ExchangeView } from '../../features/exchange/ExchangeView.jsx';
+import { LoanApplicationsView } from '../../features/LoanApplications/LoanApplicationsView.jsx';
+import { FavoritesView } from '../../features/Favorites/FavoritesView.jsx';
+import { TransactionsView } from '../../features/Transactions/TransactionsView.jsx';
+
 
 export const AppRoutes = () => (
   <Routes>
-    {/* RUTA PÚBLICA */}
     <Route path="/" element={<AuthPage />} />
 
-    {/* RUTAS DEL DASHBOARD PROTEGIDAS */}
     <Route
       path="/dashboard"
       element={
@@ -20,14 +22,16 @@ export const AppRoutes = () => (
         </ProtectedRoute>
       }
     >
-
-      {/* Estas sub-rutas heredan la protección del padre */}
       <Route path="account" element={<AccountsView />} />
+
       <Route path="purchases" element={<PurchasesView />} />
       <Route path="exchange" element={<ExchangeView />} />
+
+      <Route path="loan-applications" element={<LoanApplicationsView />} />
+      <Route path="favorites" element={<FavoritesView />} />
+      <Route path="transactions" element={<TransactionsView />} />
     </Route>
-    
-    {/* Manejo de errores 404 */}
+
     <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
   </Routes>
 );
