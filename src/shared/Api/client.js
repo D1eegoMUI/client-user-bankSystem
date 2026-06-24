@@ -54,7 +54,10 @@ export const getMyLoanById = async (id) =>
   await axiosClient.get(`/loans/${id}`);
 
 export const payLoanInstallment = async (data) =>
-  await axiosClient.post('/loan-payments', data);
+  await axiosClient.post('/loanDetails/pay', data);
+
+export const getLoanDetails = async (loanId) =>
+    await axiosClient.get(`/loanDetails/${loanId}`);
 
 // ===== LOAN APPLICATIONS =====
 export const getMyLoanApplications = async () =>

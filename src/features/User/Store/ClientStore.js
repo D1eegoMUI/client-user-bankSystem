@@ -232,3 +232,46 @@ export const useTransactionStore = create((set) => ({
         }
     },
 }));
+
+// ===== LOANS STORE =====
+export const useLoansStore = create((set) => ({
+    loans: [],
+    loading: false,
+
+    getMyLoans: async () => {
+        set({ loading: true });
+        try {
+            const { data } = await client.getMyLoans();
+            set({ loans: data.data || [] });
+        } finally {
+            set({ loading: false });
+        }
+    },
+}));
+
+// ===== LOAN DETAIL STORE =====
+export const useLoanDetailStore = create((set) => ({
+    details: [],
+    loadingDetails: false,
+    loadingPayment: false,
+
+    getLoanDetails: async (loanId) => {
+        set({ loadingDetails: true, details: [] });
+        try {
+            const { data } = await client.getLoanDetails(loanId);
+            set({ details: data.data || [] });
+        } finally {
+            set({ loadingDetails: false });
+        }
+    },
+
+    payNextInstallment: async ({ loanId, accountId }) => {
+        set({ loadingPayment: true });
+        try {
+            const { data } = await client.payLoanInstallment({ loanId, accountId });
+            return data;
+        } finally {
+            set({ loadingPayment: false });
+        }
+    },
+}));

@@ -8,7 +8,7 @@ import { ExchangeView } from '../../features/exchange/ExchangeView.jsx';
 import { LoanApplicationsView } from '../../features/LoanApplications/LoanApplicationsView.jsx';
 import { FavoritesView } from '../../features/Favorites/FavoritesView.jsx';
 import { TransactionsView } from '../../features/Transactions/TransactionsView.jsx';
-
+import { LoansView }        from '../../features/Loans/LoansView.jsx';
 
 export const AppRoutes = () => (
   <Routes>
@@ -30,6 +30,7 @@ export const AppRoutes = () => (
       <Route path="loan-applications" element={<LoanApplicationsView />} />
       <Route path="favorites" element={<FavoritesView />} />
       <Route path="transactions" element={<TransactionsView />} />
+      <Route path="loans" element={<LoansView />} />
     </Route>
 
     <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
