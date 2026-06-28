@@ -37,7 +37,7 @@ export const useMyAccountStore = create((set) => ({
 
 export const useMyPurchaseStore = create((set) => ({
     purchaseCatalog: [],
-    debitAccounts: [],
+    debitCards: [],        
     creditCards: [],
     purchases: [],
     loadingCatalog: false,
@@ -57,32 +57,32 @@ export const useMyPurchaseStore = create((set) => ({
 
     getPaymentMethods: async () => {
         set({ loadingPaymentMethods: true });
-
         try {
-            const [accountsResponse, creditCardsResponse] = await Promise.all([
-                client.getMyAccounts(),
+            const [cardsResponse, creditCardsResponse] = await Promise.all([
+                client.getMyCards({ isActive: true }),   
                 client.getMyCreditCards(),
             ]);
             set({
-                debitAccounts: accountsResponse.data?.data || [],
+                debitCards: (cardsResponse.data?.data || []).filter(c => c.isApproved),
                 creditCards: creditCardsResponse.data?.data || [],
             });
         } catch (error) {
-            console.error("ERROR PAYMENT METHODS", error);
+            console.error('ERROR PAYMENT METHODS', error);
         } finally {
             set({ loadingPaymentMethods: false });
         }
     },
 
-    getPurchasesByCardId: async (cardId) => {
+    getPurchasesByCardId: async (cardId, debitCardId = null) => {
         if (!cardId) {
             set({ purchases: [] });
             return;
         }
-
         set({ loadingPurchases: true, purchases: [] });
         try {
-            const { data } = await client.getMyPurchases({ cardId });
+            const params = { cardId };
+            if (debitCardId) params.debitCardId = debitCardId;
+            const { data } = await client.getMyPurchases(params);
             set({ purchases: data.data || [] });
         } finally {
             set({ loadingPurchases: false });
@@ -269,6 +269,220 @@ export const useLoanDetailStore = create((set) => ({
         set({ loadingPayment: true });
         try {
             const { data } = await client.payLoanInstallment({ loanId, accountId });
+            return data;
+        } finally {
+            set({ loadingPayment: false });
+        }
+    },
+}));
+
+// ------------------CARD----------------------
+export const useMyCardStore = create((set) => ({
+    cards: [],
+    cardRequests: [],
+    cardStatusRequests: [],
+    loading: false,
+    loadingRequest: false,
+    loadingToggle: false,
+    loadingRequestsList: false,
+
+    getMyCards: async () => {
+        set({ loading: true });
+        try {
+            const { data } = await client.getMyCards();
+            set({ cards: data.data || [] });
+        } finally {
+            set({ loading: false });
+        }
+    },
+
+    // Solicitudes de tarjeta nueva — para saber si hay alguna rechazada
+    getMyCardRequests: async () => {
+        set({ loadingRequestsList: true });
+        try {
+            const { data } = await client.getMyCardRequests();
+            set({ cardRequests: data.data || [] });
+        } finally {
+            set({ loadingRequestsList: false });
+        }
+    },
+
+    // Solicitudes de cambio de estado — para saber si hay alguna rechazada por tarjeta
+    getMyCardStatusRequests: async () => {
+        set({ loadingRequestsList: true });
+        try {
+            const { data } = await client.getMyCardStatusRequests();
+            set({ cardStatusRequests: data.data || [] });
+        } finally {
+            set({ loadingRequestsList: false });
+        }
+    },
+
+    updateCardLocally: (cardId, patch) => {
+        set((state) => ({
+            cards: state.cards.map((c) =>
+                c._id === cardId ? { ...c, ...patch } : c
+            ),
+        }));
+    },
+
+    // Crea una CardRequest — no una tarjeta directamente
+    createCardRequest: async (payload) => {
+        set({ loadingRequest: true });
+        try {
+            const { data } = await client.createCardRequest(payload);
+            return data;
+        } finally {
+            set({ loadingRequest: false });
+        }
+    },
+
+    // Solicita activación o desactivación — no toca isActive directamente
+    createCardStatusRequest: async (payload) => {
+        set({ loadingToggle: true });
+        try {
+            const { data } = await client.createCardStatusRequest(payload);
+            return data;
+        } finally {
+            set({ loadingToggle: false });
+        }
+    },
+}));
+// ------------------CREDIT CARDS----------------------
+export const useMyCreditCardStore = create((set) => ({
+    creditCards: [],
+    creditCardRequests: [],
+    creditCardStatusRequests: [],
+    loading: false,
+    loadingRequest: false,
+    loadingToggle: false,
+
+    getMyCreditCards: async () => {
+        set({ loading: true });
+        try {
+            const { data } = await client.getMyCreditCards();
+            set({ creditCards: data.data || [] });
+        } finally {
+            set({ loading: false });
+        }
+    },
+
+    getMyCreditCardRequests: async () => {
+        try {
+            const { data } = await client.getMyCreditCardRequests();
+            set({ creditCardRequests: data.data || [] });
+        } catch {
+            // silencioso — no bloquea la vista
+        }
+    },
+
+    // Reutiliza el endpoint genérico de cardStatusRequests
+    // filtrando solo las de tipo CREDIT en el cliente
+    getMyCreditCardStatusRequests: async () => {
+        try {
+            const { data } = await client.getMyCardStatusRequests();
+            const creditOnly = (data.data || []).filter(
+                (r) => r.cardType === 'CREDIT'
+            );
+            set({ creditCardStatusRequests: creditOnly });
+        } catch {
+            // silencioso
+        }
+    },
+
+    createCreditCardRequest: async (payload) => {
+        set({ loadingRequest: true });
+        try {
+            const { data } = await client.createMyCreditCardRequest(payload);
+            return data;
+        } finally {
+            set({ loadingRequest: false });
+        }
+    },
+
+    cancelCreditCardRequest: async (id) => {
+        const { data } = await client.cancelMyCreditCardRequest(id);
+        set((state) => ({
+            creditCardRequests: state.creditCardRequests.map((r) =>
+                r._id === id ? { ...r, status: 'CANCELLED' } : r
+            ),
+        }));
+        return data;
+    },
+
+    createCreditCardStatusRequest: async (payload) => {
+        set({ loadingToggle: true });
+        try {
+            // cardType: 'CREDIT' para que el backend sepa que es CreditCard
+            const { data } = await client.createCardStatusRequest({
+                ...payload,
+                cardType: 'CREDIT',
+            });
+            return data;
+        } finally {
+            set({ loadingToggle: false });
+        }
+    },
+}));
+// ===== EXTRA FINANCING STORE =====
+export const useMyExtraFinancingStore = create((set) => ({
+    requests: [],
+    financings: [],
+    details: [],
+    loading: false,
+    loadingDetails: false,
+    loadingPayment: false,
+
+    getMyRequests: async () => {
+        set({ loading: true });
+        try {
+            const { data } = await client.getMyExtraFinancingRequests();
+            set({ requests: data.data || [] });
+        } finally {
+            set({ loading: false });
+        }
+    },
+
+    createRequest: async (payload) => {
+        const { data } = await client.createMyExtraFinancingRequest(payload);
+        set((state) => ({ requests: [data.data, ...state.requests] }));
+        return data;
+    },
+
+    cancelRequest: async (id) => {
+        const { data } = await client.cancelMyExtraFinancingRequest(id);
+        set((state) => ({
+            requests: state.requests.map((r) =>
+                r._id === id ? { ...r, status: 'CANCELLED' } : r
+            )
+        }));
+        return data;
+    },
+
+    getFinancingsByCard: async (creditCardId) => {
+        set({ loading: true, financings: [] });
+        try {
+            const { data } = await client.getMyFinancingsByCard(creditCardId);
+            set({ financings: data.data || [] });
+        } finally {
+            set({ loading: false });
+        }
+    },
+
+    getDetails: async (financingId) => {
+        set({ loadingDetails: true, details: [] });
+        try {
+            const { data } = await client.getMyFinancingDetails(financingId);
+            set({ details: data.data || [] });
+        } finally {
+            set({ loadingDetails: false });
+        }
+    },
+
+    payInstallment: async (payload) => {
+        set({ loadingPayment: true });
+        try {
+            const { data } = await client.payMyFinancingInstallment(payload);
             return data;
         } finally {
             set({ loadingPayment: false });

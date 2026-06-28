@@ -27,11 +27,25 @@ export const findAccountByNumber = async (accountNumber) =>
 export const getMyCards = async (params) =>
   await axiosClient.get('/cards', { params });
 
-export const requestCard = async (data) =>
-  await axiosClient.post('/cards', data);
+// Solicitud de tarjeta → va a cardRequests, no a cards directamente
+export const createCardRequest = async (data) =>
+  await axiosClient.post('/cardRequests', data);
 
-export const toggleMyCardStatus = async (id) =>
-  await axiosClient.patch(`/cards/${id}/status`);
+export const getMyCardRequests = async () =>
+  await axiosClient.get('/cardRequests');
+
+export const cancelCardRequest = async (id) =>
+  await axiosClient.patch(`/cardRequests/${id}/cancel`);
+
+// Solicitud de cambio de estado (activar/desactivar)
+export const createCardStatusRequest = async (data) =>
+  await axiosClient.post('/cardStatusRequests', data);
+
+export const getMyCardStatusRequests = async () =>
+  await axiosClient.get('/cardStatusRequests');
+
+export const cancelCardStatusRequest = async (id) =>
+  await axiosClient.patch(`/cardStatusRequests/${id}/cancel`);
 
 // ===== CREDIT CARDS =====
 export const getMyCreditCards = async () =>
@@ -40,12 +54,12 @@ export const getMyCreditCards = async () =>
 export const requestCreditCard = async (data) =>
   await axiosClient.post('/creditCards', data);
 
+// DESPUÉS
 export const payCreditCard = async (data) =>
-  await axiosClient.post('/creditCards/pay', data);
+  await axiosClient.post('/creditCardPayments/pay', data);
 
 export const getMyCreditCardPayments = async (params) =>
-  await axiosClient.get('/creditCards/payments', { params });
-
+  await axiosClient.get('/creditCardPayments/payments', { params });
 // ===== LOANS =====
 export const getMyLoans = async () =>
   await axiosClient.get('/loans');
@@ -103,9 +117,34 @@ export const getMyFinancings = async () =>
 export const requestExtraFinancing = async (data) =>
   await axiosClient.post('/extra-financings', data);
 
-export const payMyFinancingInstallment = async (data) =>
-  await axiosClient.post('/extra-financing-payments', data);
-
 // ===== EXCHANGE =====
 export const convertAmount = async (data) =>
   await axiosClient.post('/exchange/convert', data);
+// ===== CREDIT CARD REQUESTS (solicitud de nueva tarjeta crédito) =====
+export const getMyCreditCardRequests = async () =>
+  await axiosClient.get('/creditCardRequests');
+
+export const createMyCreditCardRequest = async (data) =>
+  await axiosClient.post('/creditCardRequests', data);
+
+export const cancelMyCreditCardRequest = async (id) =>
+  await axiosClient.patch(`/creditCardRequests/${id}/cancel`);
+// ===== EXTRA FINANCING REQUESTS =====
+export const getMyExtraFinancingRequests = async () =>
+  await axiosClient.get('/extraFinancingRequests');
+
+export const createMyExtraFinancingRequest = async (data) =>
+  await axiosClient.post('/extraFinancingRequests', data);
+
+export const cancelMyExtraFinancingRequest = async (id) =>
+  await axiosClient.patch(`/extraFinancingRequests/${id}/cancel`);
+
+// Extra Financing detail por tarjeta (financiamientos activos)
+export const getMyFinancingsByCard = async (creditCardId) =>
+  await axiosClient.get(`/extraFinancings/card/${creditCardId}`);
+
+export const getMyFinancingDetails = async (financingId) =>
+  await axiosClient.get(`/extraFinancingDetails/${financingId}`);
+
+export const payMyFinancingInstallment = async (data) =>
+  await axiosClient.post('/extraFinancingPayments', data);

@@ -1,15 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
-    CalendarDays,
-    CreditCard,
-    Landmark,
     Minus,
     Package,
     Plus,
-    ReceiptText,
     Search,
     ShoppingCart,
-    Trash2,
 } from 'lucide-react';
 import { useMyPurchaseStore } from '../User/Store/ClientStore.js';
 import { BaseButton } from '../../shared/components/BaseButton.jsx';
@@ -17,25 +12,27 @@ import { showError, showSuccess } from '../../shared/utils/toast.jsx';
 import { CartSection } from './CartSection.jsx';
 import { PurchaseHistory } from './PurchaseHistory.jsx';
 
-const buildPaymentMethods = (debitAccounts, creditCards) => [
-    ...debitAccounts.map((account) => ({
-        key: `DEBIT:${account._id}`,
-        id: account._id,
+const buildPaymentMethods = (debitCards, creditCards) => [
+    ...debitCards.map((card) => ({
+        key: `DEBIT:${card._id}`,
+        id: card.account?._id ?? card.account,      // account._id para descontar saldo
+        debitCardId: card._id,                       // card._id para historial por tarjeta
         type: 'DEBIT',
-        label: account.accountNumber || 'Cuenta sin numero',
-        subtitle: `${account.accountType || 'Cuenta'} - ${account.bank || 'Banco Kinal'}`,
+        label: `**** ${card.cardNumber?.slice(-4) ?? '????'}`,
+        subtitle: `${card.brand ?? 'DÉBITO'} · ${card.account?.accountNumber ?? ''}`,
         availableLabel: 'Saldo disponible',
-        availableAmount: account.balance,
-        currency: account.currency || 'GTQ',
-        isActive: Boolean(account.status),
+        availableAmount: card.account?.balance ?? 0,
+        currency: 'GTQ',
+        isActive: Boolean(card.isActive && card.isApproved),
     })),
     ...creditCards.map((card) => ({
         key: `CREDIT:${card._id}`,
         id: card._id,
+        debitCardId: null,
         type: 'CREDIT',
         label: card.cardNumber || 'Tarjeta sin número',
-        subtitle: card.cardHolder || card.bank || 'Tarjeta de credito',
-        availableLabel: 'Credito disponible',
+        subtitle: card.cardHolder || card.bank || 'Tarjeta de crédito',
+        availableLabel: 'Crédito disponible',
         availableAmount: card.availableCredit || 0,
         currency: card.currency || 'GTQ',
         isActive: card.status === 'ACTIVE' || card.status === true,
@@ -45,7 +42,7 @@ const buildPaymentMethods = (debitAccounts, creditCards) => [
 export const PurchaseList = () => {
     const {
         purchaseCatalog,
-        debitAccounts,
+        debitCards,
         creditCards,
         purchases,
         loadingCatalog,
@@ -57,6 +54,7 @@ export const PurchaseList = () => {
         getPurchasesByCardId,
         processPurchase,
     } = useMyPurchaseStore();
+
     const [search, setSearch] = useState('');
     const [typeFilter, setTypeFilter] = useState('TODOS');
     const [cart, setCart] = useState([]);
@@ -68,8 +66,8 @@ export const PurchaseList = () => {
     }, [getPaymentMethods, getPurchaseCatalog]);
 
     const paymentMethods = useMemo(
-        () => buildPaymentMethods(debitAccounts, creditCards),
-        [debitAccounts, creditCards]
+        () => buildPaymentMethods(debitCards, creditCards),
+        [debitCards, creditCards]
     );
 
     const selectedPayment = useMemo(
@@ -83,13 +81,17 @@ export const PurchaseList = () => {
         }
     }, [paymentMethods, selectedPaymentKey]);
 
+    // Al cambiar de método de pago, cargar historial de esa tarjeta/cuenta
     useEffect(() => {
-        getPurchasesByCardId(selectedPayment?.id);
-    }, [getPurchasesByCardId, selectedPayment?.id]);
+        if (selectedPayment?.type === 'DEBIT') {
+            getPurchasesByCardId(selectedPayment.id, selectedPayment.debitCardId);
+        } else {
+            getPurchasesByCardId(selectedPayment?.id);
+        }
+    }, [getPurchasesByCardId, selectedPayment?.key]);
 
     const filteredCatalog = useMemo(() => {
         const searchText = search.toLowerCase();
-
         return purchaseCatalog.filter((item) => {
             const name = item.name || '';
             const description = item.description || '';
@@ -99,7 +101,6 @@ export const PurchaseList = () => {
                 name.toLowerCase().includes(searchText) ||
                 description.toLowerCase().includes(searchText) ||
                 price.includes(searchText);
-
             return matchesType && matchesSearch;
         });
     }, [purchaseCatalog, search, typeFilter]);
@@ -119,40 +120,33 @@ export const PurchaseList = () => {
             showError('Este producto no tiene stock disponible');
             return;
         }
-
         setCart((currentCart) => {
             const existingProduct = currentCart.find((item) => item._id === product._id);
-
             if (existingProduct) {
                 if (product.type === 'PRODUCTO' && existingProduct.quantity >= Number(product.stock || 0)) {
                     showError('No hay mas stock disponible para este producto');
                     return currentCart;
                 }
-
                 return currentCart.map((item) =>
                     item._id === product._id
                         ? { ...item, quantity: item.quantity + 1 }
                         : item
                 );
             }
-
             return [...currentCart, { ...product, quantity: 1 }];
         });
     };
 
     const updateQuantity = (productId, nextQuantity) => {
         const product = cart.find((item) => item._id === productId);
-
         if (nextQuantity <= 0) {
             setCart((currentCart) => currentCart.filter((item) => item._id !== productId));
             return;
         }
-
         if (product?.type === 'PRODUCTO' && nextQuantity > Number(product.stock || 0)) {
             showError('No hay mas stock disponible para este producto');
             return;
         }
-
         setCart((currentCart) =>
             currentCart.map((item) =>
                 item._id === productId ? { ...item, quantity: nextQuantity } : item
@@ -167,19 +161,16 @@ export const PurchaseList = () => {
             showError('Agrega productos al carrito');
             return;
         }
-
         if (!selectedPayment) {
             showError('Selecciona una cuenta o tarjeta para pagar');
             return;
         }
-
         if (!selectedPayment.isActive) {
-            showError('El metodo de pago seleccionado no esta activo');
+            showError('El método de pago seleccionado no está activo');
             return;
         }
-
         if (cartTotal > Number(selectedPayment.availableAmount || 0)) {
-            showError('El total supera el disponible del metodo de pago');
+            showError('El total supera el disponible del método de pago');
             return;
         }
 
@@ -194,11 +185,19 @@ export const PurchaseList = () => {
                 amount: cartTotal,
                 type: selectedPayment.type,
                 cardId: selectedPayment.id,
+                // Solo se envía cuando es débito y hay tarjeta física seleccionada
+                ...(selectedPayment.type === 'DEBIT' && selectedPayment.debitCardId
+                    ? { debitCard: selectedPayment.debitCardId }
+                    : {}),
             });
 
             clearCart();
             await getPaymentMethods();
-            await getPurchasesByCardId(selectedPayment.id);
+            if (selectedPayment.type === 'DEBIT') {
+                await getPurchasesByCardId(selectedPayment.id, selectedPayment.debitCardId);
+            } else {
+                await getPurchasesByCardId(selectedPayment.id);
+            }
             showSuccess('Compra procesada exitosamente');
         } catch (err) {
             showError(err.response?.data?.message || 'Error al procesar la compra');
