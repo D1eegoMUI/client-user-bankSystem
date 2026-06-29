@@ -15,13 +15,25 @@ export const AccountList = ({ onOpenAccount, onViewHistory }) => {
     const filteredAccounts = useMemo(() => {
         return accounts.filter((acc) => {
             const matchesSearch =
-                acc.accountNumber.includes(search) ||
+                (acc.accountNumber || '').includes(search) ||
                 (acc.currency || '').toLowerCase().includes(search.toLowerCase()) ||
                 (acc.bank || '').toLowerCase().includes(search.toLowerCase());
             const matchesType = filterType === 'TODAS' || acc.accountType === filterType;
             return matchesSearch && matchesType;
         });
     }, [accounts, search, filterType]);
+
+    const getStatusBadge = (account) => {
+        if (account.requestStatus === 'PENDING') {
+            return { bar: 'bg-amber-400', pill: 'text-amber-600 bg-amber-50', label: 'Pendiente de aprobación' };
+        }
+        if (account.requestStatus === 'REJECTED') {
+            return { bar: 'bg-red-400', pill: 'text-red-600 bg-red-50', label: 'Rechazada' };
+        }
+        return account.status
+            ? { bar: 'bg-emerald-500', pill: 'text-emerald-600 bg-emerald-50', label: 'Activa' }
+            : { bar: 'bg-red-400', pill: 'text-red-600 bg-red-50', label: 'Inactiva' };
+    };
 
     if (loading) return (
         <div className="p-10 text-center font-bold text-emerald-900">
@@ -84,51 +96,64 @@ export const AccountList = ({ onOpenAccount, onViewHistory }) => {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredAccounts.map((account) => (
-                        <div
-                            key={account._id}
-                            className="bg-white rounded-2xl shadow-sm border border-emerald-50 hover:shadow-xl hover:shadow-emerald-900/5 transition-all duration-300 overflow-hidden group"
-                        >
-                            <div className={`h-2 w-full transition-all group-hover:h-3 ${account.status ? 'bg-emerald-500' : 'bg-red-400'}`} />
-                            <div className="p-6">
-                                <div className="flex justify-between items-start mb-4">
-                                    <div>
-                                        <h3 className="text-xs font-black text-emerald-600 uppercase tracking-widest">Número de Cuenta</h3>
-                                        <p className="text-xl font-mono font-bold text-emerald-900">{account.accountNumber}</p>
+                    {filteredAccounts.map((account) => {
+                        const badge = getStatusBadge(account);
+                        return (
+                            <div
+                                key={account._id}
+                                className="bg-white rounded-2xl shadow-sm border border-emerald-50 hover:shadow-xl hover:shadow-emerald-900/5 transition-all duration-300 overflow-hidden group"
+                            >
+                                <div className={`h-2 w-full transition-all group-hover:h-3 ${badge.bar}`} />
+                                <div className="p-6">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div>
+                                            <h3 className="text-xs font-black text-emerald-600 uppercase tracking-widest">Número de Cuenta</h3>
+                                            <p className="text-xl font-mono font-bold text-emerald-900">
+                                                {account.accountNumber || 'Pendiente de aprobación'}
+                                            </p>
+                                        </div>
+                                        <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-lg border border-emerald-100">
+                                            {account.accountType}
+                                        </span>
                                     </div>
-                                    <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-lg border border-emerald-100">
-                                        {account.accountType}
-                                    </span>
-                                </div>
 
-                                <div className="mb-4">
-                                    <p className="text-gray-400 text-xs">Saldo Disponible</p>
-                                    <h2 className="text-3xl font-bold text-emerald-900">
-                                        <span className="text-emerald-500 mr-1 text-xl">{account.currency}</span>
-                                        {account.balance?.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                                    </h2>
-                                </div>
+                                    <div className="mb-4">
+                                        <p className="text-gray-400 text-xs">Saldo Disponible</p>
+                                        <h2 className="text-3xl font-bold text-emerald-900">
+                                            <span className="text-emerald-500 mr-1 text-xl">{account.currency}</span>
+                                            {account.balance?.toLocaleString('en-US', { minimumFractionDigits: 2 }) ?? '0.00'}
+                                        </h2>
+                                    </div>
 
-                                <div className="flex flex-wrap gap-2 mb-6">
-                                    <span className="flex items-center gap-1 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                                        🏦 {account.bank || 'Banco Kinal'}
-                                    </span>
-                                    <span className={`flex items-center gap-1 text-xs px-2 py-1 rounded ${account.status ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50'}`}>
-                                        ● {account.status ? 'Activa' : 'Inactiva'}
-                                    </span>
-                                </div>
+                                    <div className="flex flex-wrap gap-2 mb-2">
+                                        <span className="flex items-center gap-1 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                            🏦 {account.bank || 'Banco Kinal'}
+                                        </span>
+                                        <span className={`flex items-center gap-1 text-xs px-2 py-1 rounded ${badge.pill}`}>
+                                            ● {badge.label}
+                                        </span>
+                                    </div>
 
-                                <BaseButton
-                                    variant="secondary"
-                                    fullWidth
-                                    icon={<History size={15} />}
-                                    onClick={() => onViewHistory(account._id)}
-                                >
-                                    Ver Movimientos
-                                </BaseButton>
+                                    {account.requestStatus === 'REJECTED' && account.rejectionReason && (
+                                        <p className="text-xs text-red-500 mb-4 italic">
+                                            Motivo: {account.rejectionReason}
+                                        </p>
+                                    )}
+
+                                    <BaseButton
+                                        variant="secondary"
+                                        fullWidth
+                                        icon={<History size={15} />}
+                                        disabled={!account.accountNumber}
+                                        onClick={() => onViewHistory(account._id)}
+                                        className={!account.accountNumber ? 'opacity-50 cursor-not-allowed' : ''}
+                                    >
+                                        Ver Movimientos
+                                    </BaseButton>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>

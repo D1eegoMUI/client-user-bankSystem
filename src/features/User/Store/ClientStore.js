@@ -18,8 +18,8 @@ export const useMyAccountStore = create((set) => ({
         }
     },
 
-    openMyAccount: async ({ accountType }) => {
-        const { data } = await client.openMyAccount({ accountType });
+    openMyAccount: async ({ accountType, currency, bank }) => {
+        const { data } = await client.openMyAccount({ accountType, currency, bank });
         set((state) => ({ accounts: [data.data, ...state.accounts] }));
         return data;
     },
@@ -37,7 +37,7 @@ export const useMyAccountStore = create((set) => ({
 
 export const useMyPurchaseStore = create((set) => ({
     purchaseCatalog: [],
-    debitCards: [],        
+    debitCards: [],
     creditCards: [],
     purchases: [],
     loadingCatalog: false,
@@ -59,7 +59,7 @@ export const useMyPurchaseStore = create((set) => ({
         set({ loadingPaymentMethods: true });
         try {
             const [cardsResponse, creditCardsResponse] = await Promise.all([
-                client.getMyCards({ isActive: true }),   
+                client.getMyCards({ isActive: true }),
                 client.getMyCreditCards(),
             ]);
             set({
@@ -116,7 +116,7 @@ export const useExchangeStore = create((set) => ({
                 from,
                 to,
             });
-            set({lastConversion: data.conversion, });
+            set({ lastConversion: data.conversion, });
             return data;
         } catch (error) {
             set({
@@ -126,7 +126,7 @@ export const useExchangeStore = create((set) => ({
             });
             throw error;
         } finally {
-            set({loading: false});
+            set({ loading: false });
         }
     },
 }));
