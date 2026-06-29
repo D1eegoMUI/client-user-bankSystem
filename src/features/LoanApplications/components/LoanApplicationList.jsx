@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { useLoanApplicationStore } from '../User/Store/ClientStore.js';
-import { showSuccess, showError } from '../../shared/utils/toast.jsx';
+import { useLoanApplicationStore } from '../../User/Store/ClientStore.js';
+import { showSuccess, showError } from '../../../shared/utils/toast.jsx';
 import { PlusCircle, FileText } from 'lucide-react';
 
 const STATUS_STYLES = {

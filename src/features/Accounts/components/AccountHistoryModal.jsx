@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { useMyAccountStore } from '../User/Store/ClientStore.js';
-import { BaseModal } from '../../shared/components/BaseModal.jsx';
+import { useMyAccountStore } from '../../User/Store/ClientStore.js';
+import { BaseModal } from '../../../shared/components/BaseModal.jsx';
 
 export const AccountHistoryModal = ({ accountId, onClose }) => {
     const { history, getMyAccountHistory, loadingHistory } = useMyAccountStore();

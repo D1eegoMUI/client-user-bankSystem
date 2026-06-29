@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { CheckCircle2, Clock, AlertCircle, Wallet } from 'lucide-react';
-import { BaseModal }  from '../../shared/components/BaseModal.jsx';
-import { BaseButton } from '../../shared/components/BaseButton.jsx';
-import { showSuccess, showError } from '../../shared/utils/toast.jsx';
-import { useLoanDetailStore } from '../User/Store/ClientStore.js';
-import { useMyAccountStore }  from '../User/Store/ClientStore.js';
+import { BaseModal }  from '../../../shared/components/BaseModal.jsx';
+import { BaseButton } from '../../../shared/components/BaseButton.jsx';
+import { showSuccess, showError } from '../../../shared/utils/toast.jsx';
+import { useLoanDetailStore } from '../../User/Store/ClientStore.js';
+import { useMyAccountStore }  from '../../User/Store/ClientStore.js';
 
 const INSTALLMENT_STYLES = {
     PENDING: { icon: <Clock size={16} className="text-yellow-500" />,     cls: 'bg-yellow-50 border-yellow-200 text-yellow-700',   label: 'Pendiente' },

@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useMyAccountStore } from '../User/Store/ClientStore.js';
-import { showSuccess, showError } from '../../shared/utils/toast.jsx';
-import { BaseButton } from '../../shared/components/BaseButton.jsx';
+import { useMyAccountStore } from '../../User/Store/ClientStore.js';
+import { showSuccess, showError } from '../../../shared/utils/toast.jsx';
+import { BaseButton } from '../../../shared/components/BaseButton.jsx';
 
 export const OpenAccountModal = ({ onClose }) => {
     const { openMyAccount, loading } = useMyAccountStore(); // ⬅️ FIX: esto faltaba

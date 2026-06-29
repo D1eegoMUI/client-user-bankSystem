@@ -6,9 +6,9 @@ import {
     Search,
     ShoppingCart,
 } from 'lucide-react';
-import { useMyPurchaseStore } from '../User/Store/ClientStore.js';
-import { BaseButton } from '../../shared/components/BaseButton.jsx';
-import { showError, showSuccess } from '../../shared/utils/toast.jsx';
+import { useMyPurchaseStore } from '../../User/Store/ClientStore.js';
+import { BaseButton } from '../../../shared/components/BaseButton.jsx';
+import { showError, showSuccess } from '../../../shared/utils/toast.jsx';
 import { CartSection } from './CartSection.jsx';
 import { PurchaseHistory } from './PurchaseHistory.jsx';
 

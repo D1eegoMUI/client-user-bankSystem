@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { useFavoritesStore } from '../User/Store/ClientStore.js';
-import { showSuccess, showError } from '../../shared/utils/toast.jsx';
+import { useFavoritesStore } from '../../User/Store/ClientStore.js';
+import { showSuccess, showError } from '../../../shared/utils/toast.jsx';
 import { Star, PlusCircle, Trash2 } from 'lucide-react';
 
 export const FavoritesList = ({ onAddNew }) => {

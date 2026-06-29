@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeftRight, TrendingUp, TrendingDown } from 'lucide-react';
-import { useTransactionStore } from '../User/Store/ClientStore.js';
-import { BaseButton } from '../../shared/components/BaseButton.jsx';
+import { useTransactionStore } from '../../User/Store/ClientStore.js';
+import { BaseButton } from '../../../shared/components/BaseButton.jsx';
 
 const TRANSACTION_TYPES = [
     { value: '',                  label: 'Todas' },

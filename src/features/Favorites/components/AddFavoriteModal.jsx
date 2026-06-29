@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useFavoritesStore } from '../User/Store/ClientStore.js';
-import { showSuccess, showError } from '../../shared/utils/toast.jsx';
-import { BaseModal } from '../../shared/components/BaseModal.jsx';
-import { BaseButton } from '../../shared/components/BaseButton.jsx';
+import { useFavoritesStore } from '../../User/Store/ClientStore.js';
+import { showSuccess, showError } from '../../../shared/utils/toast.jsx';
+import { BaseModal } from '../../../shared/components/BaseModal.jsx';
+import { BaseButton } from '../../../shared/components/BaseButton.jsx';
 
 export const AddFavoriteModal = ({ onClose }) => {
     const { addFavorite, loading } = useFavoritesStore();

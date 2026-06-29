@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Landmark, ChevronRight } from 'lucide-react';
-import { useLoansStore } from '../User/Store/ClientStore.js';
-import { BaseButton }    from '../../shared/components/BaseButton.jsx';
+import { useLoansStore } from '../../User/Store/ClientStore.js';
+import { BaseButton }    from '../../../shared/components/BaseButton.jsx';
 
 const STATUS_STYLES = {
     ACTIVE:    { label: 'Activo',  cls: 'bg-emerald-100 text-emerald-700 border-emerald-200' },

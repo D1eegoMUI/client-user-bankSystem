@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Star } from 'lucide-react';
-import { BaseModal }   from '../../shared/components/BaseModal.jsx';
-import { BaseButton }  from '../../shared/components/BaseButton.jsx';
-import { showSuccess, showError } from '../../shared/utils/toast.jsx';
-import { useTransactionStore } from '../User/Store/ClientStore.js';
-import { useMyAccountStore }   from '../User/Store/ClientStore.js';
-import { useFavoritesStore }   from '../User/Store/ClientStore.js';
-import { findAccountByNumber } from '../../shared/Api/client.js';
+import { BaseModal }   from '../../../shared/components/BaseModal.jsx';
+import { BaseButton }  from '../../../shared/components/BaseButton.jsx';
+import { showSuccess, showError } from '../../../shared/utils/toast.jsx';
+import { useTransactionStore } from '../../User/Store/ClientStore.js';
+import { useMyAccountStore }   from '../../User/Store/ClientStore.js';
+import { useFavoritesStore }   from '../../User/Store/ClientStore.js';
+import { findAccountByNumber } from '../../../shared/Api/client.js';
 
 const INITIAL_FORM = {
     AccountOriginId:   '',

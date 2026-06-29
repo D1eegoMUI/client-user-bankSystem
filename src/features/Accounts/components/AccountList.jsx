@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
-import { useMyAccountStore } from '../User/Store/ClientStore.js';
+import { useMyAccountStore } from '../../User/Store/ClientStore.js';
 import { Search, History, PlusCircle } from 'lucide-react';
-import { BaseButton } from '../../shared/components/BaseButton.jsx';
+import { BaseButton } from '../../../shared/components/BaseButton.jsx';
 
 export const AccountList = ({ onOpenAccount, onViewHistory }) => {
     const { accounts, getMyAccounts, loading } = useMyAccountStore();

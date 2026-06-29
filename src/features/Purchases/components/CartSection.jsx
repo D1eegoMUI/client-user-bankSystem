@@ -8,7 +8,7 @@ import {
     ReceiptText,
 } from 'lucide-react';
 
-import { BaseButton } from '../../shared/components/BaseButton.jsx';
+import { BaseButton } from '../../../shared/components/BaseButton.jsx';
 
 export const CartSection = ({
     cart,
