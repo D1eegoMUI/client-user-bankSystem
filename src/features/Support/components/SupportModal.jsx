@@ -1,5 +1,5 @@
-import { BaseModal } from '../../shared/components/BaseModal.jsx';
-import { BaseButton } from '../../shared/components/BaseButton.jsx';
+import { BaseModal } from '../../../shared/components/BaseModal.jsx';
+import { BaseButton } from '../../../shared/components/BaseButton.jsx';
 
 export const SupportModal = ({ isOpen, onClose }) => {
     return (

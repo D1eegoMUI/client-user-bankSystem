@@ -8,9 +8,9 @@ import {
     Info
 } from 'lucide-react';
 
-import { useExchangeStore } from '../User/Store/ClientStore.js';
-import { showError } from '../../shared/utils/toast.jsx';
-import { BaseButton } from '../../shared/components/BaseButton.jsx';
+import { useExchangeStore } from '../../User/Store/ClientStore.js';
+import { showError } from '../../../shared/utils/toast.jsx';
+import { BaseButton } from '../../../shared/components/BaseButton.jsx';
 
 export const ExchangeView = () => {
 

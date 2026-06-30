@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../features/auth/store/authStore.js';
-import { SupportModal } from "../../features/Support/SupportModal.jsx";
+import { SupportModal } from "../../features/Support/components/SupportModal.jsx";
 
 import AccountIcon from '../../assets/Icons/user.svg';
 import CardIcon from '../../assets/Icons/credit-card.svg';
